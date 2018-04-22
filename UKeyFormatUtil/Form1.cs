@@ -15,7 +15,6 @@ namespace UKeyFormatUtil
 	public partial class Form1 : Form
 	{
 		IDAEnrollLib.JITECCEnrollClass sm2Enroll;
-
 		static uint SGD_SM4_ECB = 0x00000401;
 		static uint SECURE_USER_ACCOUNT = 0x00000010;
 		LogUtil log = null;
@@ -51,52 +50,10 @@ namespace UKeyFormatUtil
 		//[DllImport("user32.dll")]
 		//public static extern int EnumChildWindows(IntPtr hWndParent, CallBack lpfn, int lParam);
 
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_WaitForDevEvent", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_WaitForDevEvent_LM(StringBuilder devName, ref UInt32 length, ref UInt32 eventType);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_EnumDev", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_EnumDev(bool bPresent, StringBuilder szName, ref UInt32 length);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_ConnectDev", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_ConnectDev(StringBuilder szName, ref IntPtr devHandle);
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_GenRandom", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_GenRandom(IntPtr devHandle, [Out]byte[] random,UInt32 length);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_SetSymmKey", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_SetSymmKey(IntPtr devHandle, byte[] pbKey, UInt32 algId, ref IntPtr hKeyHandle);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_EncryptInit", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_EncryptInit(IntPtr hKeyHandle, BLOCKCIPHERPARAM encryptParam);
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_Encrypt", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_Encrypt(IntPtr hKeyHandle, byte[] pbData,UInt32 dataLen,[Out] byte[] encryptedData,ref UInt32 outLen);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_DevAuth", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_DevAuth(IntPtr devHandle, byte[] authData, UInt32 dataLen);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_EnumApplication", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_EnumApplication(IntPtr devHandle, StringBuilder szAppName, ref UInt32 dataLen);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_DeleteApplication", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_DeleteApplication(IntPtr devHandle, StringBuilder szAppName);
-
-		[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_CreateApplication", SetLastError = true, CharSet = CharSet.Ansi)]
-		public static extern int SKF_CreateApplication(IntPtr devHandle, StringBuilder szAppName, StringBuilder adminPin, uint adminPinRetryCount, StringBuilder userPin, uint userPinRetryCount, uint createFileRight, ref IntPtr hApplication);
-
-		//SKF_CreateApplication(DEVHANDLE hDev, LPSTR szAppName, LPSTR szAdminPin, DWORD dwAdminPinRetryCount,LPSTR szUserPin, DWORD dwUserPinRetryCount,DWORD dwCreateFileRights, HAPPLICATION *phApplication)
-		//SKF_DeleteApplication(DEVHANDLE hDev, LPSTR szAppName)
-		//[DllImport("gm3000_skf_hubca.dll", EntryPoint = "SKF_EnumApplication", SetLastError = true, CharSet = CharSet.Ansi)]
-		//public static extern int SKF_EnumApplication(IntPtr devHandle, byte[] szAppName, ref UInt32 dataLen);
-		//SKF_EnumApplication(DEVHANDLE hDev, LPSTR szAppName,ULONG*pulSize)
-		public struct BLOCKCIPHERPARAM
-		{
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-			public byte[] IV;
-			public int IVLen;
-			public int PaddingType;
-			public int FeedBitLength;
-		}
+		
 		delegate void GetForm();
 		delegate void DoListenFunc();
+		delegate void DoListenSKF(object ukeyInfo);
 		public Form1()
 		{
 			InitializeComponent();
@@ -105,7 +62,6 @@ namespace UKeyFormatUtil
 		private void u_init()
 		{
 			sm2Enroll = new IDAEnrollLib.JITECCEnrollClass();
-			
 			log = LogUtil.GetInstance(new SetTextBoxValue(SetValue));
 		}
         
@@ -172,8 +128,8 @@ namespace UKeyFormatUtil
 			ukeyInfoHT.AppName = "HBCAAPPLICATION_RSA";
 			ukeyInfoHT.CertType = "SM2";
 			ukeyInfoHT.CreateFlag = 1;
-			ukeyInfoHT.UKeyName = "海泰";
-			ukeyInfoHT.UKeyType = "海泰Key 1.0";
+			ukeyInfoHT.UKeyName = "HT";
+			ukeyInfoHT.UKeyType = "HTGM3000";
 			ukeyInfoHT.UserPin = "11111111";
 			ukeyInfoHT.UserPinCount = 10;
 			return ukeyInfoHT;
@@ -187,8 +143,8 @@ namespace UKeyFormatUtil
 			ukeyInfoHT.AppName = "HBCAAPPLICATION_RSA";
 			ukeyInfoHT.CertType = "SM2";
 			ukeyInfoHT.CreateFlag = 1;
-			ukeyInfoHT.UKeyName = "华虹";
-			ukeyInfoHT.UKeyType = "华虹GM3000";
+			ukeyInfoHT.UKeyName = "HH";
+			ukeyInfoHT.UKeyType = "HHGM3000";
 			ukeyInfoHT.UserPin = "11111111";
 			ukeyInfoHT.UserPinCount = 10;
 			return ukeyInfoHT;
@@ -201,10 +157,11 @@ namespace UKeyFormatUtil
 			ukeyInfoHT.AppName = "HBCAAPPLICATION_RSA";
 			ukeyInfoHT.CertType = "SM2";
 			ukeyInfoHT.CreateFlag = 1;
-			ukeyInfoHT.UKeyName = "龙脉";
-			ukeyInfoHT.UKeyType = "龙脉GM3000";
+			ukeyInfoHT.UKeyName = "LM";
+			ukeyInfoHT.UKeyType = "LMGM3000";
 			ukeyInfoHT.UserPin = "11111111";
 			ukeyInfoHT.UserPinCount = 10;
+			ukeyInfoHT.skfDllName = "gm3000_skf_hubca.dll";
 			return ukeyInfoHT;
 		}
 
@@ -222,7 +179,7 @@ namespace UKeyFormatUtil
 			}
 		}
 		#endregion
-		#region Format UKEY
+		#region Format UKEY IDAENROLL
 		public void GetForm1()
 		{
 			System.Threading.Thread.Sleep(300);
@@ -314,6 +271,123 @@ namespace UKeyFormatUtil
 			return false;
 		}
 		#endregion
+		#region Format UKEY SKF
+		private int DoFormatSKF(UKeyInfo ukeyInfo,SKFObject skfObject) 
+		{
+			try
+			{
+				int iRet = -1;
+				uint length1 = 0;
+				iRet = skfObject.skf_enumDev(true, null, ref length1);
+				if (iRet != 0)
+				{
+					log.Log("枚举设备失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				StringBuilder sb = new StringBuilder();
+				iRet = -1;
+				iRet = skfObject.skf_enumDev(true, sb, ref length1);
+				if (iRet != 0)
+				{
+					log.Log("枚举设备失败,错误代码："+iRet.ToString());
+					return iRet;
+				}
+				
+				IntPtr devHandle = IntPtr.Zero;
+				iRet = -1;
+				iRet = skfObject.skf_connectDev(sb, ref devHandle);
+				if (iRet != 0)
+				{
+					log.Log("连接设备失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				byte[] randomData = new byte[32];
+				iRet = -1;
+				iRet = skfObject.skf_genRandom(devHandle, randomData, 8);
+				if (iRet != 0)
+				{
+					log.Log("产生随机数失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				iRet = -1;
+				byte[] data = System.Text.Encoding.ASCII.GetBytes("1234567812345678");
+				IntPtr hKeyHandle = IntPtr.Zero;
+				iRet = skfObject.skf_setSymmKey(devHandle, data, SGD_SM4_ECB, ref hKeyHandle);
+				if (iRet != 0)
+				{
+					log.Log("获取加密句柄失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				BLOCKCIPHERPARAM encParam = new BLOCKCIPHERPARAM();
+				encParam.IV = new byte[32];
+				iRet = -1;
+				iRet = skfObject.skf_encryptInit(hKeyHandle, encParam);
+				if (iRet != 0)
+				{
+					log.Log("设置加密参数失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				UInt32 encDataLen = 256;
+				byte[] encryptResult = new byte[encDataLen];
+				iRet = -1;
+				iRet = skfObject.skf_encrypt(hKeyHandle, randomData, (UInt32)16, encryptResult, ref encDataLen);
+				if (iRet != 0)
+				{
+					log.Log("加密失败1,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				iRet = -1;
+				iRet = skfObject.skf_devAuth(devHandle, encryptResult, encDataLen);
+				if (iRet != 0)
+				{
+					log.Log("设备认证失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				StringBuilder appName = new StringBuilder(256);
+				UInt32 dataLen = 0;
+				iRet = -1;
+				iRet = skfObject.skf_enumApplication(devHandle, null, ref dataLen);
+				if (iRet != 0)
+				{
+					log.Log("枚举应用失败1,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				iRet = -1;
+				iRet = skfObject.skf_enumApplication(devHandle, appName, ref dataLen);
+				if (iRet != 0)
+				{
+					log.Log("枚举应用失败2,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				if (appName.ToString().Trim().Length != 0)
+				{
+					iRet = -1;
+					iRet = skfObject.skf_deleteApplication(devHandle, appName);
+					if (iRet != 0)
+					{
+						log.Log("删除应用失败,错误代码：" + iRet.ToString());
+						return iRet;
+					}
+				}
+				log.Log("格式化成功!");
+
+				iRet = -1;
+				IntPtr hApplication = IntPtr.Zero;
+				iRet = skfObject.skf_createApplication(devHandle, ukeyInfo.AppName, ukeyInfo.AdminPin, ukeyInfo.AdminPinCount, ukeyInfo.UserPin, ukeyInfo.UserPinCount, SECURE_USER_ACCOUNT, ref hApplication);
+				if (iRet != 0)
+				{
+					log.Log("创建应用失败,错误代码：" + iRet.ToString());
+					return iRet;
+				}
+				log.Log("创建应用成功!");
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString());
+			}
+			return 0;
+		}
+		#endregion
 		private void btn_test_Click(object sender, EventArgs e)
 		{
 			DoListenFunc doListen = new DoListenFunc(DoListening);
@@ -375,25 +449,41 @@ namespace UKeyFormatUtil
 			}
 		}
 
-		private void DoListening_LM()
+		private void DoListeningSKF(object uKeyInfo)
 		{
+			UKeyInfo ukeyConfig = null;
+			if (uKeyInfo is UKeyInfo)
+			{
+				ukeyConfig = (UKeyInfo)uKeyInfo;
+			}
+			else
+			{
+				log.Log("线程参数错误");
+				return;
+			}
+			SKFObject skfObject = new SKFObject(ukeyConfig.skfDllName);
+			int iRet = -1;
+			iRet = skfObject.newInstance();
+			if (iRet != 0)
+			{
+				log.Log("初始化国密库失败,错误代码：" + iRet.ToString());
+				return ;
+			}
 			StringBuilder sb = new StringBuilder("", 50);
 			UInt32 length = 1024;
 			UInt32 eventType = 1;
-			int iRet = -1;
-			iRet = SKF_WaitForDevEvent_LM(sb, ref length, ref eventType);
+			
+			iRet = skfObject.skf_waitForDevEvent(sb, ref length, ref eventType);
 			while (true)
 			{
 				if (eventType == 1)
 				{
-					//UKeyInfo uKeyInfo_hh = GetUkeyInfoLM();
-					//DoFormat(uKeyInfo_hh);
-					uint length1 = 0;
-					SKF_EnumDev(true, null, ref length1);
-					log.Log("格式化成功!" + length1.ToString());
+					DoFormatSKF(ukeyConfig, skfObject);
 				}
 				Application.DoEvents();
-				iRet = SKF_WaitForDevEvent_LM(sb, ref length, ref eventType);
+				iRet = skfObject.skf_waitForDevEvent(sb, ref length, ref eventType);
+
+				System.Threading.Thread.Sleep(500);
 			}
 		}
 
@@ -412,132 +502,12 @@ namespace UKeyFormatUtil
 
 		private void button4_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				//DoListenFunc doListen = new DoListenFunc(DoListening_LM);
-				//System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(doListen));
-				//t.IsBackground = true;
-				//log.Log("格式化开始!");
-				//t.Start();
-				int iRet = -1;
-				uint length1 = 0;
-				IntPtr hModule = DynamicLibUtil.LoadLibrary("gm3000_skf_hubca.dll");
-				IntPtr skf = DynamicLibUtil.GetProcAddress(hModule, "SKF_EnumDev");
-				SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf, typeof(SKFDelegae.SKF_EnumDev));
-				iRet = skfCon(true, null, ref length1);
-				//iRet = SKF_EnumDev(true, null, ref length1);
-				if (iRet != 0) 
-				{
-					MessageBox.Show("枚举设备失败");
-					return;
-				}
-				StringBuilder sb = new StringBuilder();
-				SKF_EnumDev(true, sb, ref length1);
-				log.Log("格式化成功!" + sb.ToString());
-				IntPtr devHandle = IntPtr.Zero;
-				iRet = -1;
-				iRet = SKF_ConnectDev(sb, ref devHandle);
-				if (iRet != 0)
-				{
-					MessageBox.Show("连接设备失败"+iRet.ToString());
-					return;
-				}
-				byte[] randomData = new byte[32];
-				iRet = -1;
-				iRet = SKF_GenRandom(devHandle, randomData, 8);
-				if (iRet != 0)
-				{
-					MessageBox.Show("产生随机数失败" + iRet.ToString());
-					return;
-				}
-				iRet = -1;
-				byte[] data = System.Text.Encoding.ASCII.GetBytes("1234567812345678");
-				IntPtr hKeyHandle = IntPtr.Zero;
-				iRet = SKF_SetSymmKey(devHandle, data, SGD_SM4_ECB,ref hKeyHandle);
-				if (iRet != 0)
-				{
-					MessageBox.Show("获取加密句柄失败" + iRet.ToString());
-					return;
-				}
-				BLOCKCIPHERPARAM encParam = new BLOCKCIPHERPARAM();
-				encParam.IV = new byte[32];
-				iRet = -1;
-				iRet = SKF_EncryptInit(hKeyHandle, encParam);
-				if (iRet != 0)
-				{
-					MessageBox.Show("设置加密参数失败" + iRet.ToString());
-					return;
-				}
-				UInt32 encDataLen = 256;
-				byte[] encryptResult = new byte[encDataLen];
-				iRet = -1;
-				iRet = SKF_Encrypt(hKeyHandle, randomData, (UInt32)16, encryptResult, ref encDataLen);
-				if (iRet != 0)
-				{
-					MessageBox.Show("加密失败1," + iRet.ToString());
-					return;
-				}
-				
-				
-				//iRet = -1;
-				//iRet = SKF_Encrypt(hKeyHandle, randomData, (UInt32)randomData.Length, encryptResult, ref encDataLen);
-				//if (iRet != 0)
-				//{
-				//	MessageBox.Show("加密失败2," + iRet.ToString());
-				//	return;
-				//}
-				iRet = -1;
-				iRet = SKF_DevAuth(devHandle, encryptResult, encDataLen);
-				if (iRet != 0)
-				{
-					MessageBox.Show("设备认证失败," + iRet.ToString());
-					return;
-				}
-				StringBuilder appName = new StringBuilder(256);
-				UInt32 dataLen = 0;
-				iRet = -1;
-				iRet = SKF_EnumApplication(devHandle, null, ref dataLen);
-				if (iRet != 0)
-				{
-					MessageBox.Show("枚举应用失败1," + iRet.ToString());
-					return;
-				}
-				iRet = -1;
-				iRet = SKF_EnumApplication(devHandle, appName, ref dataLen);
-				if (iRet != 0)
-				{
-					MessageBox.Show("枚举应用失败2," + iRet.ToString());
-					return;
-				}
-				if (appName.ToString().Trim().Length != 0)
-				{
-					iRet = -1;
-					iRet = SKF_DeleteApplication(devHandle, appName);
-					if (iRet != 0)
-					{
-						MessageBox.Show("删除应用失败," + iRet.ToString());
-						return;
-					}
-				}
-				
-				iRet = -1;
-				appName = new StringBuilder("HBCAAPPLICATION_RSA");
-				StringBuilder adminPin =new StringBuilder("88888888");
-				StringBuilder userPin = new StringBuilder("11111111");
-				uint adminPinRetryCount = 10;
-				uint userPinRetryCount = 10;
-				IntPtr hApplication = IntPtr.Zero;
-				iRet = SKF_CreateApplication(devHandle, appName, adminPin, adminPinRetryCount, userPin, userPinRetryCount, SECURE_USER_ACCOUNT, ref hApplication);
-				if (iRet != 0)
-				{
-					MessageBox.Show("创建应用失败," + iRet.ToString());
-					return;
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.ToString());
-			}
+			DoListenSKF doListen = new DoListenSKF(DoListeningSKF);
+			System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(doListen));
+			t.IsBackground = true;
+			log.Log("格式化开始!");
+			UKeyInfo ukeyInfoLM = GetUkeyInfoLM();
+			t.Start((object)ukeyInfoLM);
 		}
 
 	}

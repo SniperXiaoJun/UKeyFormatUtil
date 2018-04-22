@@ -61,9 +61,9 @@
 			// 
 			this.btn_test.Location = new System.Drawing.Point(28, 24);
 			this.btn_test.Name = "btn_test";
-			this.btn_test.Size = new System.Drawing.Size(113, 23);
+			this.btn_test.Size = new System.Drawing.Size(134, 23);
 			this.btn_test.TabIndex = 1;
-			this.btn_test.Text = "海泰-开始格式化";
+			this.btn_test.Text = "海泰-格式化(批量)";
 			this.btn_test.UseVisualStyleBackColor = true;
 			this.btn_test.Click += new System.EventHandler(this.btn_test_Click);
 			// 
@@ -82,16 +82,16 @@
 			// 
 			this.button2.Location = new System.Drawing.Point(168, 24);
 			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(158, 23);
+			this.button2.Size = new System.Drawing.Size(138, 23);
 			this.button2.TabIndex = 3;
-			this.button2.Text = "华虹-开始格式化（批量）";
+			this.button2.Text = "华虹-格式化(批量)";
 			this.button2.UseVisualStyleBackColor = true;
 			this.button2.Visible = false;
 			this.button2.Click += new System.EventHandler(this.button2_Click);
 			// 
 			// button3
 			// 
-			this.button3.Location = new System.Drawing.Point(332, 24);
+			this.button3.Location = new System.Drawing.Point(312, 24);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(113, 23);
 			this.button3.TabIndex = 4;
@@ -101,11 +101,11 @@
 			// 
 			// button4
 			// 
-			this.button4.Location = new System.Drawing.Point(461, 24);
+			this.button4.Location = new System.Drawing.Point(441, 24);
 			this.button4.Name = "button4";
-			this.button4.Size = new System.Drawing.Size(113, 23);
+			this.button4.Size = new System.Drawing.Size(125, 23);
 			this.button4.TabIndex = 5;
-			this.button4.Text = "龙脉-单个格式化";
+			this.button4.Text = "龙脉-格式化(批量)";
 			this.button4.UseVisualStyleBackColor = true;
 			this.button4.Click += new System.EventHandler(this.button4_Click);
 			// 
@@ -121,7 +121,7 @@
 			this.Controls.Add(this.btn_test);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "Form1";
-			this.Text = "湖北CA海泰格式化工具-SM2";
+			this.Text = "湖北CA格式化工具-SM2";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);

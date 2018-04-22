@@ -22,23 +22,28 @@ namespace UKeyFormatUtil
 		private IntPtr skf_setSymmKeyP;
 		private IntPtr skf_waitForDevEventP;
 
-		SKFDelegae.SKF_EnumDev skf_enumDev;
-		SKFDelegae.SKF_ConnectDev skf_connectDev;
-		SKFDelegae.SKF_CreateApplication skf_createApplication;
-		SKFDelegae.SKF_DeleteApplication skf_deleteApplication;
-		SKFDelegae.SKF_DevAuth skf_devAuth;
-		SKFDelegae.SKF_Encrypt skf_encrypt;
-		SKFDelegae.SKF_EncryptInit skf_encryptInit;
-		SKFDelegae.SKF_EnumApplication skf_enumApplication;
-		SKFDelegae.SKF_GenRandom skf_genRandom;
-		SKFDelegae.SKF_SetSymmKey skf_setSymmKey;
-		SKFDelegae.SKF_WaitForDevEvent skf_waitForDevEvent;
+		public SKFDelegae.SKF_EnumDev skf_enumDev;
+		public SKFDelegae.SKF_ConnectDev skf_connectDev;
+		public SKFDelegae.SKF_CreateApplication skf_createApplication;
+		public SKFDelegae.SKF_DeleteApplication skf_deleteApplication;
+		public SKFDelegae.SKF_DevAuth skf_devAuth;
+		public SKFDelegae.SKF_Encrypt skf_encrypt;
+		public SKFDelegae.SKF_EncryptInit skf_encryptInit;
+		public SKFDelegae.SKF_EnumApplication skf_enumApplication;
+		public SKFDelegae.SKF_GenRandom skf_genRandom;
+		public SKFDelegae.SKF_SetSymmKey skf_setSymmKey;
+		public SKFDelegae.SKF_WaitForDevEvent skf_waitForDevEvent;
 		public SKFObject(string dllName) 
 		{
 			this.dllName = dllName;
 			this.hModule = IntPtr.Zero;
-			
-			
+		}
+		~SKFObject()
+		{
+			if (this.hModule != IntPtr.Zero)
+			{
+				DynamicLibUtil.FreeLibrary(this.hModule);
+			}
 		}
 		public int newInstance()
 		{
@@ -53,35 +58,32 @@ namespace UKeyFormatUtil
 			this.skf_connectDevP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_ConnectDev");
 			this.skf_connectDev = (SKFDelegae.SKF_ConnectDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_ConnectDev));
 
-			this.skf_connectDevP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			this.skf_createApplication = (SKFDelegae.SKF_CreateApplication)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_createApplicationP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_CreateApplication");
+			this.skf_createApplication = (SKFDelegae.SKF_CreateApplication)Marshal.GetDelegateForFunctionPointer(skf_createApplicationP, typeof(SKFDelegae.SKF_CreateApplication));
 
-			this.skf_createApplicationP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_deleteApplicationP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_DeleteApplication");
+			this.skf_deleteApplication = (SKFDelegae.SKF_DeleteApplication)Marshal.GetDelegateForFunctionPointer(skf_deleteApplicationP, typeof(SKFDelegae.SKF_DeleteApplication));
 
-			this.skf_deleteApplicationP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_devAuthP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_DevAuth");
+			this.skf_devAuth = (SKFDelegae.SKF_DevAuth)Marshal.GetDelegateForFunctionPointer(skf_devAuthP, typeof(SKFDelegae.SKF_DevAuth));
 
-			this.skf_devAuthP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_encryptP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_Encrypt");
+			this.skf_encrypt = (SKFDelegae.SKF_Encrypt)Marshal.GetDelegateForFunctionPointer(skf_encryptP, typeof(SKFDelegae.SKF_Encrypt));
 
-			this.skf_encryptP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_encryptInitP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EncryptInit");
+			this.skf_encryptInit = (SKFDelegae.SKF_EncryptInit)Marshal.GetDelegateForFunctionPointer(skf_encryptInitP, typeof(SKFDelegae.SKF_EncryptInit));
 
-			this.skf_encryptInitP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_enumApplicationP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumApplication");
+			this.skf_enumApplication = (SKFDelegae.SKF_EnumApplication)Marshal.GetDelegateForFunctionPointer(skf_enumApplicationP, typeof(SKFDelegae.SKF_EnumApplication));
 
-			this.skf_enumApplicationP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_genRandomP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_GenRandom");
+			this.skf_genRandom = (SKFDelegae.SKF_GenRandom)Marshal.GetDelegateForFunctionPointer(skf_genRandomP, typeof(SKFDelegae.SKF_GenRandom));
 
-			this.skf_genRandomP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_setSymmKeyP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_SetSymmKey");
+			this.skf_setSymmKey = (SKFDelegae.SKF_SetSymmKey)Marshal.GetDelegateForFunctionPointer(skf_setSymmKeyP, typeof(SKFDelegae.SKF_SetSymmKey));
 
-			this.skf_setSymmKeyP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
-
-			this.skf_waitForDevEventP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_EnumDev");
-			SKFDelegae.SKF_EnumDev skfCon = (SKFDelegae.SKF_EnumDev)Marshal.GetDelegateForFunctionPointer(skf_connectDevP, typeof(SKFDelegae.SKF_EnumDev));
+			this.skf_waitForDevEventP = DynamicLibUtil.GetProcAddress(this.hModule, "SKF_WaitForDevEvent");
+			this.skf_waitForDevEvent = (SKFDelegae.SKF_WaitForDevEvent)Marshal.GetDelegateForFunctionPointer(skf_waitForDevEventP, typeof(SKFDelegae.SKF_WaitForDevEvent));
 			return 0;
 		}
 	}
