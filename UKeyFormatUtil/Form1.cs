@@ -161,7 +161,25 @@ namespace UKeyFormatUtil
 			ukeyInfoHT.UKeyType = "LMGM3000";
 			ukeyInfoHT.UserPin = "11111111";
 			ukeyInfoHT.UserPinCount = 10;
-			ukeyInfoHT.skfDllName = "gm3000_skf_hubca.dll";
+			ukeyInfoHT.SKFDllName = "gm3000_skf_hubca.dll";
+			ukeyInfoHT.AuthAlg = 0x00000401;
+			return ukeyInfoHT;
+		}
+
+		private UKeyInfo GetUkeyInfoFT()
+		{
+			UKeyInfo ukeyInfoHT = new UKeyInfo();
+			ukeyInfoHT.AdminPin = "88888888";
+			ukeyInfoHT.AdminPinCount = 10;
+			ukeyInfoHT.AppName = "HBCAAPPLICATION_RSA";
+			ukeyInfoHT.CertType = "SM2";
+			ukeyInfoHT.CreateFlag = 1;
+			ukeyInfoHT.UKeyName = "FT";
+			ukeyInfoHT.UKeyType = "FTGM3000";
+			ukeyInfoHT.UserPin = "11111111";
+			ukeyInfoHT.UserPinCount = 10;
+			ukeyInfoHT.SKFDllName = "HBCA_ePass3000GM.dll";
+			ukeyInfoHT.AuthAlg = 0x00000401;
 			return ukeyInfoHT;
 		}
 
@@ -461,7 +479,7 @@ namespace UKeyFormatUtil
 				log.Log("线程参数错误");
 				return;
 			}
-			SKFObject skfObject = new SKFObject(ukeyConfig.skfDllName);
+			SKFObject skfObject = new SKFObject(ukeyConfig.SKFDllName);
 			int iRet = -1;
 			iRet = skfObject.newInstance();
 			if (iRet != 0)
@@ -502,12 +520,37 @@ namespace UKeyFormatUtil
 
 		private void button4_Click(object sender, EventArgs e)
 		{
-			DoListenSKF doListen = new DoListenSKF(DoListeningSKF);
-			System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(doListen));
-			t.IsBackground = true;
-			log.Log("格式化开始!");
-			UKeyInfo ukeyInfoLM = GetUkeyInfoLM();
-			t.Start((object)ukeyInfoLM);
+			try
+			{
+				DoListenSKF doListen = new DoListenSKF(DoListeningSKF);
+				System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(doListen));
+				t.IsBackground = true;
+				log.Log("格式化开始!");
+				UKeyInfo ukeyInfoLM = GetUkeyInfoLM();
+				t.Start((object)ukeyInfoLM);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString());
+			}
+			
+		}
+
+		private void button5_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				DoListenSKF doListen = new DoListenSKF(DoListeningSKF);
+				System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(doListen));
+				t.IsBackground = true;
+				log.Log("格式化开始!");
+				UKeyInfo ukeyInfoLM = GetUkeyInfoFT();
+				t.Start((object)ukeyInfoLM);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString());
+			}
 		}
 
 	}

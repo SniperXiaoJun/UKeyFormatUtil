@@ -19,6 +19,7 @@ namespace UKeyFormatUtil
 		public uint UserPinCount;
 
 		public int CreateFlag;
-		public string skfDllName;
+		public string SKFDllName;
+		public uint AuthAlg;
 	}
 }
