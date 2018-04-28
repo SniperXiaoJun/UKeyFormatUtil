@@ -129,7 +129,7 @@ namespace UKeyFormatUtil
 			ukeyInfoHT.CertType = "SM2";
 			ukeyInfoHT.CreateFlag = 1;
 			ukeyInfoHT.UKeyName = "HT";
-			ukeyInfoHT.UKeyType = "HTGM3000";
+			ukeyInfoHT.UKeyType = "海泰Key 1.0";
 			ukeyInfoHT.UserPin = "11111111";
 			ukeyInfoHT.UserPinCount = 10;
 			return ukeyInfoHT;
@@ -144,7 +144,7 @@ namespace UKeyFormatUtil
 			ukeyInfoHT.CertType = "SM2";
 			ukeyInfoHT.CreateFlag = 1;
 			ukeyInfoHT.UKeyName = "HH";
-			ukeyInfoHT.UKeyType = "HHGM3000";
+			ukeyInfoHT.UKeyType = "华虹GM3000";
 			ukeyInfoHT.UserPin = "11111111";
 			ukeyInfoHT.UserPinCount = 10;
 			return ukeyInfoHT;

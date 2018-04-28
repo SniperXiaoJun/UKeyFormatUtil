@@ -133,7 +133,7 @@
 			this.Controls.Add(this.btn_test);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "Form1";
-			this.Text = "湖北CA格式化工具-SM2";
+			this.Text = "湖北CA格式化工具-SM2（20180428）";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
